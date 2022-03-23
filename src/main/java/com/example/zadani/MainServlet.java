@@ -35,6 +35,7 @@ public class MainServlet extends HttpServlet {
             Database.muzeSePrihlasit.add(true);
             String message = "Succesfuly registered";
             request.setAttribute("message", message);
+            request.setAttribute("messageColor", "green");
             request.setAttribute("jmenoAttribute", request.getParameter("jmenoRegistrace"));
             request.setAttribute("hesloAttribute", request.getParameter("hesloRegistrace"));
             request.getRequestDispatcher("regALog.jsp").forward(request, response);
@@ -42,10 +43,12 @@ public class MainServlet extends HttpServlet {
         } else if (request.getParameter("jmenoRegistrace") == null || request.getParameter("hesloRegistrace") == null) {
             String message = "You have not entered any information";
             request.setAttribute("message", message);
+            request.setAttribute("messageColor", "red");
             request.getRequestDispatcher("regALog.jsp").forward(request, response);
         } else if (unique(request.getParameter("jmenoRegistrace"))) {
             String message = "The name you have entered is alredy in use";
             request.setAttribute("message", message);
+            request.setAttribute("messageColor", "red");
             request.getRequestDispatcher("regALog.jsp").forward(request, response);
         }
 

@@ -36,7 +36,7 @@ public class MainServletPrihlaseni extends HttpServlet {
                 if (isInNameDatabase) {
                     getIndex = Database.ucetJmeno.indexOf(request.getParameter("jmenoPrihlaseni"));
                     Database.pocetPrihlaseni.set(getIndex, Database.pocetPrihlaseni.get(getIndex) + 1);
-                    if (Database.pocetPrihlaseni.get(getIndex) > 2) {
+                    if (Database.pocetPrihlaseni.get(getIndex) >= 2) {
                         Database.muzeSePrihlasit.set(getIndex, false);
                         errorMessage = " You cannot log in anymore, you failed way too many times.";
                     }
@@ -45,11 +45,13 @@ public class MainServletPrihlaseni extends HttpServlet {
                     errorMessage += " Number of failed logins: " + Database.pocetPrihlaseni.get(getIndex);
                 }
                 request.setAttribute("message", errorMessage);
+                request.setAttribute("messageColor", "red");
                 request.getRequestDispatcher("regALog.jsp").forward(request, response);
             }
         } catch (IndexOutOfBoundsException ex) {
             errorMessage = " Couldn't find your username in the database!";
             request.setAttribute("message", errorMessage);
+            request.setAttribute("messageColor", "red");
             request.getRequestDispatcher("regALog.jsp").forward(request, response);
         }
 
@@ -61,23 +63,23 @@ public class MainServletPrihlaseni extends HttpServlet {
 
 
     public boolean isInDatabase(String name, String heslo) {
+        int index = 0;
         for (String tempJ : Database.ucetJmeno) {
             if (name.equals(tempJ)) {
                 isInNameDatabase = true;
+                break;
             }
+            index++;
         }
         if (!isInNameDatabase) {
             throw new IndexOutOfBoundsException();
         }
 
         boolean isInDatabase = false;
-        if (isInNameDatabase) {
-            for (String tempJ : Database.ucetHeslo) {
-                if (heslo.equals(tempJ)) {
-                    isInDatabase = true;
-                }
-            }
+        if (isInNameDatabase && heslo.equals(Database.ucetHeslo.get(index))) {
+            isInDatabase = true;
         }
+
         if (!isInDatabase) {
             errorMessage += "The pasword you have typed is wrong.";
         }
